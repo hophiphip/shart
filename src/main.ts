@@ -10,6 +10,8 @@ let scene: THREE.Scene;
 let renderer: THREE.WebGLRenderer;
 let controller;
 
+let content = document.getElementById('content');
+
 let reticle: THREE.Mesh;
 
 let hitTestSource: THREE.XRHitTestSource | null = null;
@@ -23,8 +25,7 @@ const onWindowResize = () => {
 };
 
 const init = () => {
-    container = document.createElement('div');
-    document.body.appendChild(container);
+    container = document.getElementById('container') as HTMLDivElement;
 
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
@@ -39,11 +40,15 @@ const init = () => {
     renderer.xr.enabled = true;
     container.appendChild(renderer.domElement);
 
-    document.body.appendChild(ARButton.createButton(renderer, { 
+    let options = {
         requiredFeatures: [ 'hit-test' ],
-        optionalFeatures: [ 'dom-overlay', 'dom-overlay-for-handheld-ar' ],
-        domOverlay: { root: document.body }, 
-    }));
+        optionalFeatures: [ 'dom-overlay' ],
+        domOverlay: { root: document.getElementById('content') }, 
+    };
+
+    let buttonAR = ARButton.createButton(renderer, options);
+
+    content!.appendChild(buttonAR);
 
     const geometry = new THREE.CylinderGeometry(0.1, 0.1, 0.2, 32).translate(0, 0.1, 0);
 
@@ -93,6 +98,9 @@ const render: XRAnimationLoopCallback = (time: number, frame?: THREE.XRFrame | u
             session?.addEventListener('end', () => {
                 hitTestSourceRequested = false;
                 hitTestSource = null;
+
+                document.getElementById('place')!.style.display = 'none';
+                document.getElementById('content')!.style.display = 'block';
             });
 
             hitTestSourceRequested = true;
@@ -105,6 +113,8 @@ const render: XRAnimationLoopCallback = (time: number, frame?: THREE.XRFrame | u
                 const hit = hitTestResults[0];
                 
                 
+                document.getElementById('place')!.style.display = 'block';
+
                 if (referenceSpace !== null) {
                     const newMatrix = hit.getPose(referenceSpace)?.transform.matrix;
                     
@@ -115,6 +125,8 @@ const render: XRAnimationLoopCallback = (time: number, frame?: THREE.XRFrame | u
                 }
             } else {
                 reticle.visible = false;
+
+                document.getElementById('place')!.style.display = 'none';
             }
         }
     }
@@ -124,6 +136,7 @@ const render: XRAnimationLoopCallback = (time: number, frame?: THREE.XRFrame | u
 
 const animate = () => {
     renderer.setAnimationLoop(render);
+    requestAnimationFrame(animate);
 };
 
 init();

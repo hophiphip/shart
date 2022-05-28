@@ -9,12 +9,25 @@
     <title>Mapper</title>
 
     <script type="module" src="/src/main.ts" defer></script>
+    <script type="module" src="/src/ui/index.ts" defer></script>
 </head>
 
 <body>
-    <div id="info">
-        <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> ar - hit test<br/>(Chrome Android 81+)
-    </div>
+    <main id="content">
+        <div id="sidenav" class="sidenav">
+            <a id="close" href="javascript:void(0)" class="closebtn">&times;</a>
+            <a class="ar-object" id="ar-1" href="#">Object_1</a>
+            <a class="ar-object" id="ar-2" href="#">Object_2</a>
+            <a class="ar-object" id="ar-3" href="#">Object_3</a>
+            <a class="ar-object" id="ar-4" href="#">Object_4</a>
+        </div>
+    
+        <span id="open" style="font-size:30px;cursor:pointer">&#9776; open</span>
+    
+        <div id="container" style="position: fixed;"></div>
+
+        <button type="button" id="place">Place</button>
+    </main>
 </body>
 
 </html>
