@@ -1,47 +1,20 @@
 import * as THREE from 'three';
 import { XRAnimationLoopCallback } from 'three';
-import { ARButton } from "./ARButton";
-import { light, scene, renderer, container, camera, reticle, controller, geometry } from './renderer';
+import { ARButton } from "./components/ARButton";
+import { scene, renderer, camera, reticle, initialize } from './renderer';
 
 import './css/main.css';
 
 let hitTestSource: THREE.XRHitTestSource | null = null;
 let hitTestSourceRequested = false;
 
-light.position.set(0.5, 1, 0.25);
-scene.add(light);
-
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.xr.enabled = true;
-
-container.appendChild(renderer.domElement);
-
 customElements.get('ar-button') || customElements.define('ar-button', ARButton);
 
 const onWindowResize = () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-
     renderer.setSize(window.innerWidth, window.innerHeight);
 };
-
-const onSelect = () => {
-    if (reticle.visible) {
-        const material = new THREE.MeshPhongMaterial({ color: 0xffffff * Math.random() });
-        const mesh = new THREE.Mesh(geometry, material);
-        reticle.matrix.decompose(mesh.position, mesh.quaternion, mesh.scale);
-        mesh.scale.y = Math.random() * 2 + 1;
-        scene.add(mesh);
-    }
-};
-
-controller.addEventListener('select', onSelect);
-scene.add(controller);
-
-reticle.matrixAutoUpdate = false;
-reticle.visible = false;
-scene.add(reticle);
 
 window.addEventListener('resize', onWindowResize);
 
@@ -114,4 +87,5 @@ document.getElementById("close")!.onclick = () => {
     document.getElementById("sidenav")!.style.width = "0";
 }
 
+initialize();
 animate();

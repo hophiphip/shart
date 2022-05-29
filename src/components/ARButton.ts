@@ -1,179 +1,135 @@
-class ARButton {
+import { LitElement, css, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
-	static createButton(renderer: THREE.WebGLRenderer, sessionInit: any = {}) {
+import { renderer, options as sessionInit } from '../renderer';
 
-		const button = document.createElement('button');
-		
-		function showStartAR(/* device */) {
-			let currentSession: any = null;
-			
-			if (sessionInit.domOverlay === undefined) {
-				const overlay = document.createElement('div');
-				overlay.style.display = 'none';
-				document.body.appendChild(overlay); 
+const activeText = 'START AR';
+const stopText = 'STOP AR';
 
-				const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-				svg.setAttribute('width', "38");
-				svg.setAttribute('height', "38");
-				svg.style.position = 'absolute';
-				svg.style.right = '20px';
-				svg.style.top = '20px';
-				svg.addEventListener('click', function () {
-					currentSession.end();
-				});
-				overlay.appendChild( svg );
+const notSupportedText = 'AR NOT SUPPORTED';
+const notAllowedText = 'AR NOT ALLOWED';
 
-				const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-				path.setAttribute('d', 'M 12,12 L 28,28 M 28,12 12,28');
-				path.setAttribute('stroke', '#fff');
-				path.setAttribute('stroke-width', "2");
-				svg.appendChild(path);
+const webXRNotAvailableText = 'WEBXR NOT AVAILABLE';
+const webXRNeedsHTTPS = 'WEBXR NEEDS HTTPS';
 
-				sessionInit.optionalFeatures ??= [];
+@customElement('ar-button')
+export class ARButton extends LitElement {
+    @property({type: Boolean, reflect: true})
+    private active: boolean;
 
-				sessionInit.optionalFeatures.push( 'dom-overlay' );
-				sessionInit.domOverlay = { root: overlay };
-			}
+    @property({type: String, reflect: true})
+    private text: String;
 
-			async function onSessionStarted(session: XRSession) {
-				session.addEventListener('end', onSessionEnded);
+    @property({ type: XRSession })
+    private currentSession: XRSession | null = null;
 
-				renderer.xr.setReferenceSpaceType('local');
+    constructor() {
+        super();
+        
+        this.active = false;
+        this.text = window.isSecureContext ? webXRNotAvailableText : webXRNeedsHTTPS;
 
-				await renderer.xr.setSession(((session as any) as THREE.XRSession));
+        if ('xr' in navigator) {
+            navigator.xr?.isSessionSupported('immersive-ar')
+            .then((supported) => {
+                if (supported) {
+                    this.active = true;
+                    this.text = activeText
+                } else {
+                    this.active = false;
+                    this.text = notSupportedText;
+                }
+            })
+            .catch((err) => {
+                this.active = false;
+                this.text = notAllowedText;
+                
+                console.warn('Exception during the call xr.isSessionSupported', err);
+            });
+        }
+    }
 
-				button.textContent = 'STOP AR';
-				sessionInit.domOverlay.root.style.display = '';
-				currentSession = session;
-			}
+    static styles = css`
+        :host([active]) button {
+            position: absolute;
+            bottom: 1.25rem;
+            padding: 0.75rem 0.375rem;
+            border: 1px solid #fff;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.1);
+            color: #fff;
+            font: normal 13px sans-serif;
+            text-align: center; 
+            display: block;
+            outline: none;
+            z-index: 999;
+            cursor: pointer;
+            left: calc(50% - 3.125rem);
+            width: 6.25rem;
+            opacity: 0.5;
+        }
 
-			function onSessionEnded(/* event */) {
-				currentSession.removeEventListener( 'end', onSessionEnded );
+        :host button {
+            position: absolute;
+            bottom: 1.25rem;
+            padding: 0.75rem 0.375rem;
+            border: 1px solid #fff;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.1);
+            color: #fff;
+            font: normal 13px sans-serif;
+            text-align: center; 
+            display: block;
+            outline: none;
+            z-index: 999;
+            cursor: auto;
+            left: calc(50% - 4.688rem);
+            width: 9.375rem;
+            opacity: 0.5;
+        }
 
-				button.textContent = 'START AR';
-				sessionInit.domOverlay.root.style.display = 'none';
+        :host([active]) button:hover {
+            opacity: 1.0;
+        }
+    `;
 
-				currentSession = null;
-			}
+    private onXRSessionStarted = async (session: XRSession) => {
+        const onXRSessionEnded = (_: XRSessionEvent) => {
+            this.currentSession?.removeEventListener('end', onXRSessionEnded);
 
-			//
+		    this.text = activeText;
+		    sessionInit.domOverlay.root!.style.display = 'none';
+		    this.currentSession = null;
+        };
 
-			button.style.display = '';
+        session.addEventListener('end', onXRSessionEnded);
 
-			button.style.cursor = 'pointer';
-			button.style.left = 'calc(50% - 50px)';
-			button.style.width = '100px';
+        renderer.xr.setReferenceSpaceType('local');
 
-			button.textContent = 'START AR';
+        await renderer.xr.setSession(((session as any) as THREE.XRSession));
 
-			button.onmouseenter = function () {
-				button.style.opacity = '1.0';
-			};
+		this.text = stopText;
+		sessionInit.domOverlay.root!.style.display = '';
+		this.currentSession = session;
+    }
 
-			button.onmouseleave = function () {
-				button.style.opacity = '0.5';
-			};
+    private onClick = (_: Event) => {
+        if (this.active) {
+            if (this.currentSession === null) {
+                navigator.xr?.requestSession('immersive-ar', sessionInit)
+                    .then(this.onXRSessionStarted)
+                    .catch((err) => {
+                        console.error(err);
+                    });
+            } else {
+                this.currentSession.end();
+            }
+        }
+    }
 
-			button.onclick = function () {
-				if (currentSession === null) {
-					navigator.xr?.requestSession('immersive-ar', sessionInit).then(onSessionStarted);
-				} else {
-					currentSession.end();
-				}
-			};
-
-		}
-
-		function disableButton() {
-
-			button.style.display = '';
-
-			button.style.cursor = 'auto';
-			button.style.left = 'calc(50% - 75px)';
-			button.style.width = '150px';
-
-			button.onmouseenter = null;
-			button.onmouseleave = null;
-
-			button.onclick = null;
-
-		}
-
-		function showARNotSupported() {
-
-			disableButton();
-
-			button.textContent = 'AR NOT SUPPORTED';
-
-		}
-
-		function showARNotAllowed(exception: Error) {
-			disableButton();
-
-			console.warn('Exception when trying to call xr.isSessionSupported', exception);
-
-			button.textContent = 'AR NOT ALLOWED';
-
-		}
-
-		function stylizeElement(element: HTMLElement) {
-			element.style.position = 'absolute';
-			element.style.bottom = '20px';
-			element.style.padding = '12px 6px';
-			element.style.border = '1px solid #fff';
-			element.style.borderRadius = '4px';
-			element.style.background = 'rgba(0,0,0,0.1)';
-			element.style.color = '#fff';
-			element.style.font = 'normal 13px sans-serif';
-			element.style.textAlign = 'center';
-			element.style.opacity = '0.5';
-			element.style.outline = 'none';
-			element.style.zIndex = '999';
-		}
-
-		if ('xr' in navigator) {
-
-			button.id = 'ARButton';
-			button.style.display = 'none';
-
-			stylizeElement( button );
-
-			navigator.xr?.isSessionSupported( 'immersive-ar' ).then( function ( supported ) {
-
-				supported ? showStartAR() : showARNotSupported();
-
-			} ).catch( showARNotAllowed );
-
-			return button;
-
-		} else {
-
-			const message = document.createElement( 'a' );
-
-			if ( window.isSecureContext === false ) {
-
-				message.href = document.location.href.replace( /^http:/, 'https:' );
-				message.innerHTML = 'WEBXR NEEDS HTTPS'; // TODO Improve message
-
-			} else {
-
-				message.href = 'https://immersiveweb.dev/';
-				message.innerHTML = 'WEBXR NOT AVAILABLE';
-
-			}
-
-			message.style.left = 'calc(50% - 90px)';
-			message.style.width = '180px';
-			message.style.textDecoration = 'none';
-
-			stylizeElement( message );
-
-			return message;
-
-		}
-
-	}
-
+    protected render() {
+        return html`
+            <button @click=${this.onClick}>${this.text}</button>
+        `;
+    }
 }
-
-export { ARButton };
