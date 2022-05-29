@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { XRAnimationLoopCallback } from 'three';
-import { ARButton } from './ui/components/ARButton';
+import { ARButton } from './components/ARButton';
 
 import './css/main.css';
 
