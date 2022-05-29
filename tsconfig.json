@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "useDefineForClassFields": true,
     "module": "ESNext",
     "lib": ["ESNext", "DOM"],
     "moduleResolution": "Node",
@@ -15,7 +14,9 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "skipLibCheck": true,
-    "typeRoots": ["./node_modules/@types/"]
+    "typeRoots": ["./node_modules/@types/"],
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false,
   },
   "include": ["src"]
 }
