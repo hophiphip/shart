@@ -3,12 +3,14 @@ class ARButton {
 	static createButton(renderer: THREE.WebGLRenderer, sessionInit: any = {}) {
 
 		const button = document.createElement('button');
-
-		function showStartAR( /*device*/ ) {
+		
+		function showStartAR(/* device */) {
+			let currentSession: any = null;
+			
 			if (sessionInit.domOverlay === undefined) {
 				const overlay = document.createElement('div');
 				overlay.style.display = 'none';
-				document.body.appendChild(overlay);
+				document.body.appendChild(overlay); 
 
 				const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 				svg.setAttribute('width', "38");
@@ -25,21 +27,13 @@ class ARButton {
 				path.setAttribute('d', 'M 12,12 L 28,28 M 28,12 12,28');
 				path.setAttribute('stroke', '#fff');
 				path.setAttribute('stroke-width', "2");
-				svg.appendChild( path );
+				svg.appendChild(path);
 
-				if ( sessionInit.optionalFeatures === undefined ) {
-
-					sessionInit.optionalFeatures = [];
-
-				}
+				sessionInit.optionalFeatures ??= [];
 
 				sessionInit.optionalFeatures.push( 'dom-overlay' );
 				sessionInit.domOverlay = { root: overlay };
-
 			}
-
-
-			let currentSession: any = null;
 
 			async function onSessionStarted(session: XRSession) {
 				session.addEventListener('end', onSessionEnded);
@@ -50,11 +44,10 @@ class ARButton {
 
 				button.textContent = 'STOP AR';
 				sessionInit.domOverlay.root.style.display = '';
-
 				currentSession = session;
 			}
 
-			function onSessionEnded( /*event*/ ) {
+			function onSessionEnded(/* event */) {
 				currentSession.removeEventListener( 'end', onSessionEnded );
 
 				button.textContent = 'START AR';

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { XRAnimationLoopCallback } from 'three';
-import { ARButton } from 'three/examples/jsm/webxr/ARButton';
+import { ARButton } from './ui/components/ARButton';
 
 import './css/main.css';
 
@@ -48,7 +48,7 @@ const init = () => {
 
     let buttonAR = ARButton.createButton(renderer, options);
 
-    content!.appendChild(buttonAR);
+    document.body.appendChild(buttonAR);
 
     const geometry = new THREE.CylinderGeometry(0.1, 0.1, 0.2, 32).translate(0, 0.1, 0);
 

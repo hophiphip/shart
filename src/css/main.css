@@ -139,3 +139,13 @@ a, button, input, select {
 	height: 35px;
 	display: none;
 }
+
+body main {
+	position: fixed !important;
+	z-index: 1 !important;
+}
+
+body div {
+	position: fixed !important;
+	z-index: 0 !important;
+}
