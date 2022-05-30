@@ -34,12 +34,16 @@ export class ARButton extends LitElement {
     @property()
     private currentSession: XRSession | null = null;
 
+    @property()
+    private arFooter: ARFooter | null = null;
+
     constructor() {
         super();
         
-        this.isAr = false;
-        this.active = false;
-        this.text = window.isSecureContext ? webXRNotAvailableText : webXRNeedsHTTPS;
+        this.isAr     = false;
+        this.active   = false;
+        this.text     = window.isSecureContext ? webXRNotAvailableText : webXRNeedsHTTPS;
+        this.arFooter = document.querySelector('ar-footer');
 
         if ('xr' in navigator) {
             navigator.xr?.isSessionSupported('immersive-ar')
@@ -102,7 +106,7 @@ export class ARButton extends LitElement {
             this.currentSession?.removeEventListener('end', onXRSessionEnded);
 
             this.isAr = false;
-            document.querySelector('ar-footer')!.isAr = this.isAr;
+            this.arFooter!.isAr = this.isAr;
 
 		    this.text = activeText;
 		    sessionInit.domOverlay.root!.style.display = 'none';
@@ -116,7 +120,7 @@ export class ARButton extends LitElement {
         await renderer.xr.setSession(((session as any) as THREE.XRSession));
 
         this.isAr = true;
-        document.querySelector('ar-footer')!.isAr = this.isAr;
+        this.arFooter!.isAr = this.isAr;
 
 		this.text = stopText;
 		sessionInit.domOverlay.root!.style.display = '';

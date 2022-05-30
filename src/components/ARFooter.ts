@@ -9,12 +9,24 @@ export class ARFooter extends LitElement {
     @property({type: Boolean, reflect: true})
     active: Boolean;
 
+    @property()
+    sideNav: HTMLElement | null = null;
+
     constructor() {
         super();
         this.isAr = false;
         this.active = false;
+        this.sideNav = document.getElementById("sidenav");
+    }
 
+    connectedCallback(): void {
+        super.connectedCallback();
         window.addEventListener("deviceorientation", this.handleOrientation, true);
+    }
+
+    disconnectedCallback(): void {
+        window.removeEventListener("deviceorientation", this.handleOrientation);
+        super.disconnectedCallback();
     }
 
     private handleOrientation = (evt: DeviceOrientationEvent) => {
@@ -27,13 +39,13 @@ export class ARFooter extends LitElement {
 
         if (!this.isAr || xAxis === null) {
             this.active = false;
-            document.getElementById("sidenav")!.style.height = "0";
-            
+            this.sideNav!.style.height = "0";
+
             return;
         }
 
         this.active = xAxis > 30 ? true : false;
-        document.getElementById("sidenav")!.style.height = this.active ? "0" : "100%";
+        this.sideNav!.style.height = this.active ? "0" : "100%";
     }
 
     static styles = css`
@@ -44,7 +56,7 @@ export class ARFooter extends LitElement {
 	        height: 10%;
 	        width: 50%;
 	        z-index: 3;
-            transition: all 1s linear;
+            transition: all .5s linear;
         }
 
         :host footer {
@@ -54,7 +66,7 @@ export class ARFooter extends LitElement {
 	        height: 15%;
 	        width: 100%;
 	        z-index: 3;
-            transition: all 1s linear;
+            transition: all .5s linear;
         }
 
         :host([active]) footer div {
