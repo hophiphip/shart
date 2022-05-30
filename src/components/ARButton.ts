@@ -31,7 +31,7 @@ export class ARButton extends LitElement {
     @property({type: String, reflect: true})
     private text: String;
 
-    @property({ type: XRSession })
+    @property()
     private currentSession: XRSession | null = null;
 
     constructor() {
@@ -117,7 +117,7 @@ export class ARButton extends LitElement {
 
         this.isAr = true;
         document.querySelector('ar-footer')!.isAr = this.isAr;
-        
+
 		this.text = stopText;
 		sessionInit.domOverlay.root!.style.display = '';
 		this.currentSession = session;

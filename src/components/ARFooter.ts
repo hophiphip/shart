@@ -27,6 +27,8 @@ export class ARFooter extends LitElement {
 
         if (!this.isAr || xAxis === null) {
             this.active = false;
+            document.getElementById("sidenav")!.style.height = "0";
+            
             return;
         }
 
