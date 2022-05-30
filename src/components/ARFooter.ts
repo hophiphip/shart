@@ -1,5 +1,8 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { ARMap } from './ARMap';
+
+const zIndex = css`3`;
 
 @customElement('ar-footer')
 export class ARFooter extends LitElement {
@@ -10,13 +13,13 @@ export class ARFooter extends LitElement {
     active: Boolean;
 
     @property()
-    sideNav: HTMLElement | null = null;
+    private arMap: ARMap | null = null;
 
     constructor() {
         super();
-        this.isAr = false;
-        this.active = false;
-        this.sideNav = document.getElementById("sidenav");
+        this.isAr    = false;
+        this.active  = false;
+        this.arMap   = document.querySelector('ar-map');
     }
 
     connectedCallback(): void {
@@ -39,13 +42,13 @@ export class ARFooter extends LitElement {
 
         if (!this.isAr || xAxis === null) {
             this.active = false;
-            this.sideNav!.style.height = "0";
+            this.arMap!.active = false;
 
             return;
         }
 
         this.active = xAxis > 30 ? true : false;
-        this.sideNav!.style.height = this.active ? "0" : "100%";
+        this.arMap!.active = !this.active;
     }
 
     static styles = css`
@@ -55,7 +58,7 @@ export class ARFooter extends LitElement {
 	        bottom: 5%;
 	        height: 10%;
 	        width: 50%;
-	        z-index: 3;
+	        z-index: ${zIndex};
             transition: all .5s linear;
         }
 
@@ -65,7 +68,7 @@ export class ARFooter extends LitElement {
 	        bottom: 0;
 	        height: 15%;
 	        width: 100%;
-	        z-index: 3;
+	        z-index: ${zIndex};
             transition: all .5s linear;
         }
 
@@ -74,15 +77,14 @@ export class ARFooter extends LitElement {
             height: 100%;
             border: 1px solid #222;
             border-radius: 1rem;
-            background: #111;
-            transition: all 1s linear;
+            background: #000;
         }
 
         :host footer div {
             width: 100%;
             height: 100%;
-            background: #111;
-            transition: all 1s linear;
+            background: #000;
+            border-top: 1px solid #333;
         }
 
         :host footer div ar-button {

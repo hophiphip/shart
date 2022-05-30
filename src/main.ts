@@ -1,22 +1,31 @@
 import * as THREE from 'three';
 import { XRAnimationLoopCallback } from 'three';
-import { ARButton } from "./components/ARButton";
 import { scene, renderer, camera, reticle, initialize } from './renderer';
 
 import './css/main.css';
+
+import { ARButton } from "./components/ARButton";
 import { ARFooter } from './components/ARFooter';
+import { ARMap } from './components/ARMap';
+import { ModeToggle } from './components/ModeToggle';
 
 let hitTestSource: THREE.XRHitTestSource | null = null;
 let hitTestSourceRequested = false;
 
 customElements.get('ar-button') || customElements.define('ar-button', ARButton);
 customElements.get('ar-footer') || customElements.define('ar-footer', ARFooter);
+customElements.get('ar-map') || customElements.define('ar-map', ARMap);
+customElements.get('mode-toggle') || customElements.define('mode-toggle', ModeToggle);
 
 const onWindowResize = () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 };
+
+screen.orientation?.lock?.('portrait')
+    .then(() => {})
+    .catch((err) => { console.warn(err); });
 
 window.addEventListener('resize', onWindowResize);
 

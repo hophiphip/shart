@@ -3,6 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 
 import { renderer, options as sessionInit } from '../renderer';
 import { ARFooter } from './ARFooter';
+import { ModeToggle } from './ModeToggle';
 
 const activeText = 'START AR';
 const stopText = 'STOP AR';
@@ -13,20 +14,13 @@ const notAllowedText = 'AR NOT ALLOWED';
 const webXRNotAvailableText = 'WEBXR NOT AVAILABLE';
 const webXRNeedsHTTPS = 'WEBXR NEEDS HTTPS';
 
-declare global {
-    interface HTMLElementTagNameMap {
-        "ar-button": ARButton;
-        "ar-footer": ARFooter;
-    }
-}
-
 @customElement('ar-button')
 export class ARButton extends LitElement {
     @property({type: Boolean, reflect: true})
-    private isAr: boolean;
+    private isAr: Boolean;
 
     @property({type: Boolean, reflect: true})
-    private active: boolean;
+    private active: Boolean;
 
     @property({type: String, reflect: true})
     private text: String;
@@ -37,6 +31,9 @@ export class ARButton extends LitElement {
     @property()
     private arFooter: ARFooter | null = null;
 
+    @property()
+    private modeToggle: ModeToggle | null = null;
+
     constructor() {
         super();
         
@@ -44,6 +41,7 @@ export class ARButton extends LitElement {
         this.active   = false;
         this.text     = window.isSecureContext ? webXRNotAvailableText : webXRNeedsHTTPS;
         this.arFooter = document.querySelector('ar-footer');
+        this.modeToggle = document.querySelector('mode-toggle');
 
         if ('xr' in navigator) {
             navigator.xr?.isSessionSupported('immersive-ar')
@@ -66,6 +64,10 @@ export class ARButton extends LitElement {
     }
 
     static styles = css`
+        .ar-button {
+            -webkit-tap-highlight-color: transparent;
+        }
+
         :host([active]) button {
             padding: 0.75rem 0.375rem;
             border: 1px solid #fff;
@@ -107,6 +109,7 @@ export class ARButton extends LitElement {
 
             this.isAr = false;
             this.arFooter!.isAr = this.isAr;
+            this.modeToggle!.isHidden = this.isAr;
 
 		    this.text = activeText;
 		    sessionInit.domOverlay.root!.style.display = 'none';
@@ -121,6 +124,7 @@ export class ARButton extends LitElement {
 
         this.isAr = true;
         this.arFooter!.isAr = this.isAr;
+        this.modeToggle!.isHidden = this.isAr;
 
 		this.text = stopText;
 		sessionInit.domOverlay.root!.style.display = '';
@@ -143,7 +147,7 @@ export class ARButton extends LitElement {
 
     protected render() {
         return html`
-            <button @click=${this.onClick}>${this.text}</button>
+            <button @click=${this.onClick} class="ar-button">${this.text}</button>
         `;
     }
 }
