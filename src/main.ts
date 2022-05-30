@@ -20,13 +20,13 @@ const onWindowResize = () => {
 
 window.addEventListener('resize', onWindowResize);
 
-const render: XRAnimationLoopCallback = (time: number, frame?: THREE.XRFrame | undefined) => {
+const render: XRAnimationLoopCallback = (_: number, frame?: THREE.XRFrame | undefined) => {
     if (frame) {
         const referenceSpace = renderer.xr.getReferenceSpace();
         const session = renderer.xr.getSession();
 
         if (referenceSpace) {
-            const pose = frame.getViewerPose(referenceSpace);
+            //const pose = frame.getViewerPose(referenceSpace);
         }    
 
         if (hitTestSourceRequested == false) {
