@@ -1,9 +1,10 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { ARFooter } from './ARFooter';
 
 const colors = {
-    light: css`#d8dbe0`,
-    dark: css`#28292c`,
+    light: css`#ddd`,
+    dark: css`#333`,
 };
 
 const sizes = {
@@ -15,7 +16,7 @@ const sizes = {
     sliderLeft: css`8px`,
     sliderWidth: css`37px`,
     sliderHeight: css`37px`,
-}
+};
 
 @customElement('mode-toggle')
 export class ModeToggle extends LitElement {
@@ -25,11 +26,17 @@ export class ModeToggle extends LitElement {
     @property({type: Boolean, reflect: true})
     isHidden: Boolean;
 
+    @property()
+    arFooter: ARFooter | null = null;
+
     constructor() {
         super();
 
         this.isDarkMode = true;
         this.isHidden = false;
+        this.arFooter = document.querySelector('ar-footer');
+
+        this.updateGlobalColorMode(this.isDarkMode);
     }
 
     static styles = css`
@@ -89,8 +96,23 @@ export class ModeToggle extends LitElement {
         }
     `;
 
+    private updateGlobalColorMode(isDarkMode: Boolean) {
+        const body = document.body;
+
+        if (isDarkMode && !body.hasAttribute('dark')) {
+            body.setAttribute('dark', '');
+        }
+
+        if (!isDarkMode && body.hasAttribute('dark')) {
+            body.removeAttribute('dark');
+        }
+
+        this.arFooter!.dark = isDarkMode;
+    }
+
     private modeToggle(_: Event) {
         this.isDarkMode = !this.isDarkMode;
+        this.updateGlobalColorMode(this.isDarkMode);
     }
 
     protected render() {

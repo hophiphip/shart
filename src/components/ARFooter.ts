@@ -4,6 +4,16 @@ import { ARMap } from './ARMap';
 
 const zIndex = css`3`;
 
+const colors = {
+    bkColorDark: css`#000`,
+    borderColorDark: css`#222`,
+    borderTopColorDark: css`#333`,
+
+    bkColor: css`#fff`,
+    borderColor: css`#444`,
+    borderTopColor: css`#555`,
+};
+
 @customElement('ar-footer')
 export class ARFooter extends LitElement {
     @property({type: Boolean, reflect: true})
@@ -11,6 +21,9 @@ export class ARFooter extends LitElement {
 
     @property({type: Boolean, reflect: true})
     active: Boolean;
+
+    @property({type: Boolean, reflect: true})
+    dark: Boolean;
 
     @property()
     private arMap: ARMap | null = null;
@@ -20,6 +33,7 @@ export class ARFooter extends LitElement {
         this.isAr    = false;
         this.active  = false;
         this.arMap   = document.querySelector('ar-map');
+        this.dark    = document.body.hasAttribute('dark');
     }
 
     connectedCallback(): void {
@@ -52,22 +66,22 @@ export class ARFooter extends LitElement {
     }
 
     static styles = css`
+        :host footer {
+            left: 0;
+            bottom: 0;
+            height: 15%;
+            width: 100%;
+        }
+
         :host([active]) footer {
-            position: fixed;
 	        left: 25%;
 	        bottom: 5%;
 	        height: 10%;
 	        width: 50%;
-	        z-index: ${zIndex};
-            transition: all .5s linear;
         }
 
-        :host footer {
+        footer {
             position: fixed;
-	        left: 0;
-	        bottom: 0;
-	        height: 15%;
-	        width: 100%;
 	        z-index: ${zIndex};
             transition: all .5s linear;
         }
@@ -75,16 +89,26 @@ export class ARFooter extends LitElement {
         :host([active]) footer div {
             width: 100%;
             height: 100%;
-            border: 1px solid #222;
+            border: 1px solid ${colors.borderColor};
             border-radius: 1rem;
-            background: #000;
+            background: ${colors.bkColor};
+        }
+
+        :host([dark]) footer div {
+            border: 1px solid ${colors.borderColorDark};
+            background: ${colors.bkColorDark};
         }
 
         :host footer div {
             width: 100%;
             height: 100%;
-            background: #000;
-            border-top: 1px solid #333;
+            background: ${colors.bkColor};
+            border-top: 1px solid ${colors.borderTopColor};
+        }
+
+        :host([dark]) footer div {
+            background: ${colors.bkColorDark};
+            border-top: 1px solid ${colors.borderTopColorDark};
         }
 
         :host footer div ar-button {

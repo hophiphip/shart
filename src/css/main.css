@@ -1,6 +1,22 @@
+:root {
+	--bk-color-dark: #111;
+	--color-dark: #fff;
+
+	--bk-color: #fff;
+	--color: #111; 
+}
+
+body:not([dark]) {
+	background-color: var(--bk-color);
+	color: var(--color);
+}
+
+body[dark] {
+	background-color: var(--bk-color-dark);
+	color: var(--color-dark);
+}
+
 body {
-	background-color: #111;
-	color: #fff;
 	font-family: Monospace;
 	font-size: 0.8rem;
 	line-height: 1.5rem;
