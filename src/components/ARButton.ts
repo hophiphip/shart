@@ -2,6 +2,7 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import { renderer, options as sessionInit } from '../renderer';
+import { ARFooter } from './ARFooter';
 
 const activeText = 'START AR';
 const stopText = 'STOP AR';
@@ -12,8 +13,18 @@ const notAllowedText = 'AR NOT ALLOWED';
 const webXRNotAvailableText = 'WEBXR NOT AVAILABLE';
 const webXRNeedsHTTPS = 'WEBXR NEEDS HTTPS';
 
+declare global {
+    interface HTMLElementTagNameMap {
+        "ar-button": ARButton;
+        "ar-footer": ARFooter;
+    }
+}
+
 @customElement('ar-button')
 export class ARButton extends LitElement {
+    @property({type: Boolean, reflect: true})
+    private isAr: boolean;
+
     @property({type: Boolean, reflect: true})
     private active: boolean;
 
@@ -26,6 +37,7 @@ export class ARButton extends LitElement {
     constructor() {
         super();
         
+        this.isAr = false;
         this.active = false;
         this.text = window.isSecureContext ? webXRNotAvailableText : webXRNeedsHTTPS;
 
@@ -51,8 +63,6 @@ export class ARButton extends LitElement {
 
     static styles = css`
         :host([active]) button {
-            position: absolute;
-            bottom: 1.25rem;
             padding: 0.75rem 0.375rem;
             border: 1px solid #fff;
             border-radius: 4px;
@@ -62,16 +72,12 @@ export class ARButton extends LitElement {
             text-align: center; 
             display: block;
             outline: none;
-            z-index: 999;
             cursor: pointer;
-            left: calc(50% - 3.125rem);
             width: 6.25rem;
             opacity: 0.5;
         }
 
         :host button {
-            position: absolute;
-            bottom: 1.25rem;
             padding: 0.75rem 0.375rem;
             border: 1px solid #fff;
             border-radius: 4px;
@@ -81,9 +87,7 @@ export class ARButton extends LitElement {
             text-align: center; 
             display: block;
             outline: none;
-            z-index: 999;
             cursor: auto;
-            left: calc(50% - 4.688rem);
             width: 9.375rem;
             opacity: 0.5;
         }
@@ -97,6 +101,9 @@ export class ARButton extends LitElement {
         const onXRSessionEnded = (_: XRSessionEvent) => {
             this.currentSession?.removeEventListener('end', onXRSessionEnded);
 
+            this.isAr = false;
+            document.querySelector('ar-footer')!.isAr = this.isAr;
+
 		    this.text = activeText;
 		    sessionInit.domOverlay.root!.style.display = 'none';
 		    this.currentSession = null;
@@ -108,6 +115,9 @@ export class ARButton extends LitElement {
 
         await renderer.xr.setSession(((session as any) as THREE.XRSession));
 
+        this.isAr = true;
+        document.querySelector('ar-footer')!.isAr = this.isAr;
+        
 		this.text = stopText;
 		sessionInit.domOverlay.root!.style.display = '';
 		this.currentSession = session;

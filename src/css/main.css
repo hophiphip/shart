@@ -21,16 +21,15 @@ a, button, input, select {
 
 /* Sidenav */
 .sidenav {
-	height: 100%;
-	width: 0;
+	height: 0;
+	width: 100%;
 	position: fixed;
 	z-index: 1;
-	top: 0;
+	bottom: 0;
 	left: 0;
-	background-color: #111;
+	background-color: #333;
 	overflow-x: hidden;
 	transition: 0.5s;
-	padding-top: 60px;
 }
   
 .sidenav a {
@@ -59,14 +58,14 @@ a, button, input, select {
 	.sidenav a {font-size: 18px;}
 }
 
-/* Place button */
-#place {
-	position: absolute;
-	bottom: 20px;
-	left: calc(50% - 50px);
-	width: 100px;
-	height: 35px;
-	display: none;
+#container {
+	position: fixed !important;
+	z-index: 2 !important;
+}
+
+canvas {
+	position: fixed !important;
+	z-index: 2;
 }
 
 body main {
@@ -74,7 +73,8 @@ body main {
 	z-index: 1 !important;
 }
 
+/* for debugger */
 body div {
 	position: fixed !important;
-	z-index: 0 !important;
+	z-index: 2 !important;
 }
