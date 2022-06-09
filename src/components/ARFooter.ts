@@ -36,24 +36,7 @@ export class ARFooter extends LitElement {
         this.dark    = document.body.hasAttribute('dark');
     }
 
-    connectedCallback(): void {
-        super.connectedCallback();
-        window.addEventListener("deviceorientation", this.handleOrientation, true);
-    }
-
-    disconnectedCallback(): void {
-        window.removeEventListener("deviceorientation", this.handleOrientation);
-        super.disconnectedCallback();
-    }
-
-    private handleOrientation = (evt: DeviceOrientationEvent) => {
-
-        // const absolute = evt.absolute;
-        // const zAxis    = evt.alpha;
-        // const yAxis    = evt.gamma;
-
-        const xAxis = evt.beta;
-
+    handleOrientation = (xAxis: number | null) => {
         if (!this.isAr || xAxis === null) {
             this.active = false;
             this.arMap!.active = false;
