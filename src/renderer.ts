@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export const container = document.getElementById('container') as HTMLDivElement;;
+export const container = document.getElementById('container') as HTMLDivElement;
 export const scene = new THREE.Scene(); 
 export const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20); 
 export const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);

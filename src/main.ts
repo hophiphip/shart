@@ -27,7 +27,7 @@ const onWindowResize = () => {
 };
 
 screen.orientation?.lock?.('portrait')
-    .then(() => {})
+    .then(() => { console.log('Locked orientation to portrait'); })
     .catch((err) => { console.warn(err); });
 
 window.addEventListener('resize', onWindowResize);

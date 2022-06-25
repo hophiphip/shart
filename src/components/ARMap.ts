@@ -4,7 +4,7 @@ import { customElement, property } from 'lit/decorators.js';
 @customElement('ar-map')
 export class ARMap extends LitElement {
     @property({type: Boolean, reflect: true})
-    active: Boolean;
+    active: boolean;
 
     constructor() {
         super();

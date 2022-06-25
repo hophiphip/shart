@@ -17,13 +17,13 @@ const webXRNeedsHTTPS = 'WEBXR NEEDS HTTPS';
 @customElement('ar-button')
 export class ARButton extends LitElement {
     @property({type: Boolean, reflect: true})
-    private isAr: Boolean;
+    private isAr: boolean;
 
     @property({type: Boolean, reflect: true})
-    private active: Boolean;
+    private active: boolean;
 
     @property({type: String, reflect: true})
-    private text: String;
+    private text: string;
 
     @property()
     private currentSession: XRSession | null = null;

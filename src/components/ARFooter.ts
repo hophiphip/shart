@@ -17,13 +17,13 @@ const colors = {
 @customElement('ar-footer')
 export class ARFooter extends LitElement {
     @property({type: Boolean, reflect: true})
-    isAr: Boolean;
+    isAr: boolean;
 
     @property({type: Boolean, reflect: true})
-    active: Boolean;
+    active: boolean;
 
     @property({type: Boolean, reflect: true})
-    dark: Boolean;
+    dark: boolean;
 
     @property()
     private arMap: ARMap | null = null;

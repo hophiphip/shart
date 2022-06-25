@@ -21,10 +21,10 @@ const sizes = {
 @customElement('mode-toggle')
 export class ModeToggle extends LitElement {
     @property({type: Boolean, reflect: true})
-    isDarkMode: Boolean;
+    isDarkMode: boolean;
 
     @property({type: Boolean, reflect: true})
-    isHidden: Boolean;
+    isHidden: boolean;
 
     @property()
     arFooter: ARFooter | null = null;
@@ -96,7 +96,7 @@ export class ModeToggle extends LitElement {
         }
     `;
 
-    private updateGlobalColorMode(isDarkMode: Boolean) {
+    private updateGlobalColorMode(isDarkMode: boolean) {
         const body = document.body;
 
         if (isDarkMode && !body.hasAttribute('dark')) {

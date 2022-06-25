@@ -4,22 +4,22 @@ import { customElement, property } from "lit/decorators.js";
 @customElement('ar-arrow')
 export class Arrow extends LitElement {
     @property({type: Boolean, reflect: true})
-    active: Boolean;
+    active: boolean;
 
     @property({reflect: true})
-    yAxisInitial: Number | null = null;
+    yAxisInitial: number | null = null;
 
     @property({reflect: true})
-    yAxisCurrent: Number | null = null;
+    yAxisCurrent: number | null = null;
 
     @property({reflect: true})
-    rotation: Number;
+    rotation: number;
 
     constructor() {
         super();
         this.active = true;
         this.rotation = 360;
-    };
+    }
 
     static styles = css`
         :host #container {
